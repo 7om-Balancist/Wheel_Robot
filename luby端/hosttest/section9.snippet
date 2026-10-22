@@ -1,0 +1,27 @@
+    printf("=== 9. 【回归】中断的擦除留下的位翻转残留, 必须仍可擦写 ===\n");
+    {
+        /* 场景: A 有记录, B 更新; 第三次保存目标 A, 擦除途中断电 →
+           A 的前几字节被擦成位翻转的值(0x43->0x63), 不符任何"魔数前缀"形态。
+           若判成 FOREIGN, 这个槽就再也擦不掉 → 标定永久死锁, 全车无恢复手段。 */
+        mock_reset();
+        CalStore_Save(&v1);                 /* 写 A */
+        CalStore_Save(&v2);                 /* 写 B */
+        {
+            unsigned char *f = mock_raw();
+            unsigned char junk[4] = {0x63, 0x61, 0x6C, 0xFF};
+            memcpy(f + CAL_SLOT_A_ADDR, junk, 4);
+            memset(f + CAL_SLOT_A_ADDR + 4, 0xFF, 20);
+        }
+        {
+            SecClass_t c = Cal_ClassifySector(CAL_SLOT_A_ADDR);
+            GrayBaseline_t v3 = { .front_edge=1500, .rear_edge=1600, .ground={2000, 2100} };
+            Cal_Status_t s3;
+            CHECK(c == SEC_OURS, "位翻转残留被判成 %s, 会导致标定永久死锁", Cal_SecClassStr(c));
+            s3 = CalStore_Save(&v3);
+            CHECK(s3 == CAL_OK, "位翻转残留的槽再存失败: %s", Cal_StatusStr(s3));
+            CHECK(CalStore_Load(&got) == CAL_OK && got.front_edge == 1500, "重存后读回不对");
+            printf("  分类=%s, 重新保存=%s, 读回 F=%u OK\n",
+                   Cal_SecClassStr(c), Cal_StatusStr(s3), got.front_edge);
+        }
+    }
+

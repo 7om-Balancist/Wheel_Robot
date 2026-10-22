@@ -1,0 +1,36 @@
+# 构建产物（STM32CubeIDE / CLion / 手工 make）
+Debug/
+Release/
+cmake-build-*/
+build/
+mx.scratch/
+*.o
+*.d
+*.su
+*.cyclo
+*.elf
+*.map
+*.list
+*.hex
+*.exe
+
+# 二进制文件一律不入库（固件烧写镜像 .bin / 任何预编译产物）
+*.bin
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# IDE / 操作系统
+.idea/
+.vscode/
+*.launch
+desktop.ini
+Thumbs.db
+.DS_Store
+*.bak
+*~
+
+# 临时文件
+*.log
+*.tmp
