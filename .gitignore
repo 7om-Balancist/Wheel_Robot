@@ -1,0 +1,25 @@
+# 模型权重不入库（体积原因，见 README「模型文件」一节）
+*.onnx
+*.pt
+
+# 任何二进制文件都不上传（模型权重 .bin / 固件镜像 .bin）
+*.bin
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 采集脚本产生的图片与目录
+captures/
+*.jpg
+*.jpeg
+*.png
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
